@@ -59,7 +59,7 @@ input_sequence_2 = "Sickness kept him home the third week"
 output_sequence_2 = "Sickness hath kept that gent home the third week"
 
 # encode the inputs
-task_prefix = "translate English to Early Modern English: "
+task_prefix = "translate English to Shakspeare: "
 input_sequences = [input_sequence_1, input_sequence_2]
 
 encoding = tokenizer(
@@ -90,7 +90,7 @@ loss = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels).
 print(loss.item())
 
 #Test the output
-input_ids = tokenizer("translate English to Early Modern English: What language do you speak?.", return_tensors="pt").input_ids
+input_ids = tokenizer("translate English to Shakspeare: What language do you speak?.", return_tensors="pt").input_ids
 
 outputs = model.generate(input_ids)
 
