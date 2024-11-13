@@ -5,4 +5,5 @@ An AI that converts English into a Shakespearian style (AKA: Early Modern Englis
 # Prerequisites
 pip install transformers    
 pip install torch   
-pip install transformers[torch]    
+pip install transformers[torch]  
+pip install sentencepiece  
