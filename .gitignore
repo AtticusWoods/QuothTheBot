@@ -161,6 +161,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-shakespeare_translation_model
-shakespeare_translation_tokenizer
+# shakespeare_translation_model
+# shakespeare_translation_tokenizer
 Personal_Checkpoints
