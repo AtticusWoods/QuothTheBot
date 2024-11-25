@@ -11,11 +11,23 @@ model = T5ForConditionalGeneration.from_pretrained("shakespeare_translation_mode
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 model.eval()
+
 # Example sentence
-sentence = "Have you been to the north, It is quite cold."
+# sentence = "You are an idiot, would you please leave?" # Produces good
+# sentence = "If I was going to tell you a story, what kind would you want to hear?" # Produces good
+# sentence = "When should we meet to talk about the party? I think it is going to be quite difficult to plan."
+sentence = "Have you ever been to the north? I hear it is quite cold."
+# sentence = "I must leave to find the duke, he owes me a lot of money." # Produces good
+# sentence = "Have you seen my son James? He is a small boy about twelve years old."
+# sentence = "Do you have no honor? I could kill you for that insult!"
+
+sentence = input("Please type a sentence to convert to Shakespeare: \n")
 
 # Translate the sentence
 translated_text = translate_text(sentence, model, tokenizer, device)
 
 # Print the result
-print("Shakespearean Translation:", translated_text)
+print()
+print("Original Text: " + sentence)
+print("Shakespearean Translation: " + translated_text)
+print()

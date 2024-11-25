@@ -9,19 +9,22 @@ from sklearn.model_selection import train_test_split
 from util.translate import translate_text
 from util.checkpoint import load_checkpoint, save_checkpoint, get_latest_checkpoint
 
+
+
 # Load model and tokenizer
 # tokenizer = T5Tokenizer.from_pretrained("t5-small")
 # model = T5ForConditionalGeneration.from_pretrained("t5-small")
 tokenizer = T5Tokenizer.from_pretrained("shakespeare_translation_tokenizer")
 model = T5ForConditionalGeneration.from_pretrained("shakespeare_translation_model")
+device_type = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Hyperparameters
-epochs = 100
-batch_size = 16
+epochs = 95
+batch_size = 8
 learning_rate = 3e-5
 max_source_length = 512
 max_target_length = 128
-sample_size = 10000  # number of random lines to sample
+sample_size = 20000  # number of random lines to sample
 save_interval = 5
 checkpoint_dir = "checkpoints"
 
@@ -42,7 +45,7 @@ class ShakespeareDataset(Dataset):
     def __getitem__(self, idx):
         # Get the corresponding modern and Shakespearean lines
         # Prepare the inputs with task prefix
-        task_prefix = "translate English to Shakspeare style English: "
+        task_prefix = "translate English to Shakspeare: "
         input_text = task_prefix + self.modern_text[idx]
         target_text = self.shakespeare_text[idx]
 
@@ -103,7 +106,7 @@ steps_per_epoch = len(train_dataloader)
 scheduler = OneCycleLR(optimizer, max_lr=max_lr, steps_per_epoch=steps_per_epoch, epochs=epochs)
 
 # Training loop
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device(device_type)
 model.to(device)
 
 # Load the checkpoint if it exists
@@ -143,9 +146,26 @@ for epoch in range(start_epoch, epochs):
     print(f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss / len(train_dataloader):.4f}, Learning Rate: {current_lr}")
     
 
-        # Save a checkpoint periodically
+    # Save a checkpoint periodically
     if (epoch + 1) % save_interval == 0:
         save_checkpoint(model, optimizer, scheduler, epoch + 1, filepath=f"checkpoints/checkpoint_epoch_{epoch+1}.pth")
+
+        # Validation step after training
+        model.eval()
+        val_loss = 0
+        with torch.no_grad():
+            for batch in val_dataloader:
+                input_ids = batch["input_ids"].to(device)
+                attention_mask = batch["attention_mask"].to(device)
+                labels = batch["labels"].to(device)
+
+                # Forward pass for validation
+                outputs = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+                val_loss += outputs.loss.item()
+
+        val_loss /= len(val_dataloader)
+        print(f"Validation Loss: {val_loss:.4f}")
+
 
 
 #-------Save Model-------
@@ -153,7 +173,7 @@ print("Saving Model")
 model.save_pretrained("shakespeare_translation_model")
 tokenizer.save_pretrained("shakespeare_translation_tokenizer")
 
-testPhrase = "Have you ever been north, I've hear it is very cold"
+testPhrase = "What kind of person are you? I think you are an idiot."
 
 translated_text = translate_text(testPhrase, model, tokenizer, device)
-print("Shakespearean Translation:", translated_text)
+print("Shakespearean Translation: " + translated_text)
