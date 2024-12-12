@@ -16,7 +16,7 @@ model.eval()
 # sentence = "You are an idiot, would you please leave?" # Produces good
 # sentence = "If I was going to tell you a story, what kind would you want to hear?" # Produces good
 # sentence = "When should we meet to talk about the party? I think it is going to be quite difficult to plan."
-sentence = "Have you ever been to the north? I hear it is quite cold."
+#sentence = "Have you ever been to the north? I hear it is quite cold."
 # sentence = "I must leave to find the duke, he owes me a lot of money." # Produces good
 # sentence = "Have you seen my son James? He is a small boy about twelve years old."
 # sentence = "Do you have no honor? I could kill you for that insult!"
